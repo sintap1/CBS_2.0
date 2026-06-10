@@ -23,6 +23,7 @@ jobs:
         run: |
           mkdir -p ~/.suitecloud-sdk
           echo "${{ secrets.CREDENTIALS_P12 }}" | base64 -d > ~/.suitecloud-sdk/credentials_ci.p12
+          ls -la ~/.suitecloud-sdk/
       - name: Validate Project
         env:
           SUITECLOUD_CI: 1
