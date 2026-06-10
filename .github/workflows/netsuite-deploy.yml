@@ -20,9 +20,11 @@ jobs:
       - name: Install SuiteCloud CLI
         run: npm install -g @oracle/suitecloud-cli --acceptsuitecloudsdklicense
       - name: Create Private Key File
-        run: | 
-          echo "${{secrets.PRIVATE_KEY}}" > /tmp/private_key.pem
+        run: |
+          echo "${{ secrets.PRIVATE_KEY }}" | sed 's/\\n/\n/g' > /tmp/private_key.pem
           chmod 600 /tmp/private_key.pem
+          cat /tmp/private_key.pem | head -3
+          cat /tmp/private_key.pem | tail -3
       - name: Debug Secrets
         run: |
           echo "Account ID length: ${#ACCOUNT_ID}"
