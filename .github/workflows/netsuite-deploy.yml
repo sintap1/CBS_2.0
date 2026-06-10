@@ -19,32 +19,17 @@ jobs:
           distribution: 'oracle'
       - name: Install SuiteCloud CLI
         run: npm install -g @oracle/suitecloud-cli --acceptsuitecloudsdklicense
-      - name: Create Private Key File
+      - name: Setup Credentials File
         run: |
-          echo "${{ secrets.PRIVATE_KEY }}" > /tmp/private_key.pem
-          chmod 600 /tmp/private_key.pem
-          wc -l /tmp/private_key.pem
-          head -1 /tmp/private_key.pem
-          tail -1 /tmp/private_key.pem
-      - name: Debug Secrets
-        run: |
-          echo "Account ID length: ${#ACCOUNT_ID}"
-          echo "Certificate ID length: ${#CERT_ID}"
-        env:
-          ACCOUNT_ID: ${{secrets.ACCOUNT_ID}}
-          CERT_ID: ${{secrets.CERTIFICATE_ID}}
-      - name: Setup Netsuite Credentials
-        env:
-          SUITECLOUD_CI: 1
-          SUITECLOUD_CI_PASSKEY: ${{secrets.PASSKEY}}
-        run: suitecloud account:setup:ci --authid main_auth_id --certificateid ${{secrets.CERTIFICATE_ID}} --privatekeypath /tmp/private_key.pem --account ${{secrets.ACCOUNT_ID}}
+          mkdir -p ~/.suitecloud-sdk
+          echo "${{ secrets.CREDENTIALS_P12 }}" | base64 -d > ~/.suitecloud-sdk/credentials_ci.p12
       - name: Validate Project
         env:
           SUITECLOUD_CI: 1
-          SUITECLOUD_CI_PASSKEY: ${{secrets.PASSKEY}}
+          SUITECLOUD_CI_PASSKEY: ${{ secrets.PASSKEY }}
         run: suitecloud project:validate
       - name: Deploy Project
         env:
           SUITECLOUD_CI: 1
-          SUITECLOUD_CI_PASSKEY: ${{secrets.PASSKEY}}
+          SUITECLOUD_CI_PASSKEY: ${{ secrets.PASSKEY }}
         run: suitecloud project:deploy
